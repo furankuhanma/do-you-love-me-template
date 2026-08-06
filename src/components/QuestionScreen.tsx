@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import confetti from 'canvas-confetti';
-import { playChimeSound, playDodgeSound } from '../utils/audio';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import confetti from "canvas-confetti";
+import { playChimeSound, playDodgeSound } from "../utils/audio";
 
 interface QuestionScreenProps {
   questionText: string;
@@ -9,31 +9,45 @@ interface QuestionScreenProps {
   onYes: () => void;
 }
 
-const noPhrases = [
-  'NO',
-  'Are you sure? 🥺',
-  'Pretty please? 💕',
-  'Think again! 💭',
-  'Wrong button! 😜',
-  'Nice try! 😂',
-  'You can\'t catch me! 🏃‍♂️',
-  'No is not an option! 💖',
-  'Just click YES! ✨',
-];
-
 export const QuestionScreen: React.FC<QuestionScreenProps> = ({
   questionText,
   catImage,
   onYes,
 }) => {
   const [noCount, setNoCount] = useState(0);
-  const [noPosition, setNoPosition] = useState<{ x: number; y: number } | null>(null);
+  const [noPosition, setNoPosition] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const [yesScale, setYesScale] = useState(1);
+  const [yesClicked, setYesClicked] = useState(false);
+
+  // Sequence of headline phrases as the NO button gets clicked
+  const noPhrases = [
+    questionText || "Do you love me?",
+    "Are you sure?",
+    "Nah that's not right",
+    "Try again",
+    "Be serious",
+    "Okay now you're just playing...",
+    "Okay last chance....",
+  ];
+
+  const lastPhraseIndex = noPhrases.length - 1; // index of "Okay last chance...."
+  const currentPhraseIndex = Math.min(noCount, lastPhraseIndex);
+  const headline = yesClicked
+    ? "I knew you'd say yes"
+    : noPhrases[currentPhraseIndex];
+
+  // NO button disappears once we've reached the "last chance" phrase
+  const showNoButton = !yesClicked && noCount < lastPhraseIndex;
+
+  // NO button shrinks a bit with each click
+  const noScale = Math.max(1 - noCount * 0.12, 0.35);
 
   const handleNoInteraction = () => {
     playDodgeSound();
     setNoCount((prev) => prev + 1);
-    
+
     // Scale up YES button gradually
     setYesScale((prev) => Math.min(prev + 0.25, 2.5));
 
@@ -45,7 +59,8 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
 
   const handleYesClick = () => {
     playChimeSound();
-    
+    setYesClicked(true);
+
     // Fire romantic heart confetti explosion
     const duration = 2.5 * 1000;
     const end = Date.now() + duration;
@@ -56,14 +71,14 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         angle: 60,
         spread: 55,
         origin: { x: 0 },
-        colors: ['#f472b6', '#e11d48', '#fb7185', '#fda4af', '#f43f5e'],
+        colors: ["#f472b6", "#e11d48", "#fb7185", "#fda4af", "#f43f5e"],
       });
       confetti({
         particleCount: 5,
         angle: 120,
         spread: 55,
         origin: { x: 1 },
-        colors: ['#f472b6', '#e11d48', '#fb7185', '#fda4af', '#f43f5e'],
+        colors: ["#f472b6", "#e11d48", "#fb7185", "#fda4af", "#f43f5e"],
       });
 
       if (Date.now() < end) {
@@ -77,22 +92,20 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
     }, 600);
   };
 
-  const currentNoPhrase = noPhrases[Math.min(noCount, noPhrases.length - 1)];
-
   return (
     <div className="flex flex-col items-center justify-center min-h-[85vh] p-4 text-center select-none overflow-hidden relative">
       {/* Background soft hearts decoration */}
       <div className="absolute inset-0 pointer-events-none opacity-30 flex items-center justify-between p-8">
         <motion.div
           animate={{ y: [-10, 10, -10], rotate: [-5, 5, -5] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           className="text-pink-300 text-5xl"
         >
           💖
         </motion.div>
         <motion.div
           animate={{ y: [10, -10, 10], rotate: [5, -5, 5] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="text-rose-300 text-6xl"
         >
           💕
@@ -113,7 +126,7 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
             referrerPolicy="no-referrer"
             className="w-48 h-48 object-contain rounded-2xl drop-shadow-md"
             animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.span
             animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
@@ -125,16 +138,27 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         </div>
 
         {/* Question Heading */}
-        <h1 className="text-3xl sm:text-4xl font-bold font-sans text-rose-900 mb-8 flex items-center justify-center gap-2">
-          <span>{questionText}</span>
-          <motion.span
-            animate={{ scale: [1, 1.3, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity }}
-            className="text-rose-500 inline-block"
-          >
-            ❤️
-          </motion.span>
-        </h1>
+        <div className="min-h-[3.5rem] sm:min-h-[4.5rem] mb-8 flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            <motion.h1
+              key={headline}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.25 }}
+              className="text-3xl sm:text-4xl font-bold font-sans text-rose-900 flex items-center justify-center gap-2"
+            >
+              <span>{headline}</span>
+              <motion.span
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+                className="text-rose-500 inline-block"
+              >
+                ❤️
+              </motion.span>
+            </motion.h1>
+          </AnimatePresence>
+        </div>
 
         {/* Buttons Container */}
         <div className="flex items-center justify-center gap-6 w-full min-h-[80px] relative">
@@ -150,44 +174,41 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
             {noCount > 0 && <span className="text-sm opacity-90">✨</span>}
           </motion.button>
 
-          {/* NO Button (Dodgeable) */}
-          <motion.div
-            style={
-              noPosition
-                ? {
-                    position: 'absolute',
-                    left: `calc(50% + ${noPosition.x}px)`,
-                    top: `calc(50% + ${noPosition.y}px)`,
-                  }
-                : { position: 'relative' }
-            }
-            animate={noPosition ? { x: 0, y: 0 } : {}}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          >
-            <motion.button
-              onMouseEnter={handleNoInteraction}
-              onClick={handleNoInteraction}
-              onTouchStart={handleNoInteraction}
-              className="px-8 py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xl rounded-2xl shadow-lg shadow-rose-200 transition-colors cursor-pointer select-none whitespace-nowrap"
-            >
-              {currentNoPhrase}
-            </motion.button>
-          </motion.div>
+          {/* NO Button (Dodgeable, click-only, shrinks, then disappears) */}
+          <AnimatePresence>
+            {showNoButton && (
+              <motion.div
+                key="no-button-wrapper"
+                style={
+                  noPosition
+                    ? {
+                        position: "absolute",
+                        left: `calc(50% + ${noPosition.x}px)`,
+                        top: `calc(50% + ${noPosition.y}px)`,
+                      }
+                    : { position: "relative" }
+                }
+                initial={{ opacity: 1 }}
+                animate={{
+                  x: noPosition ? 0 : undefined,
+                  y: noPosition ? 0 : undefined,
+                  opacity: 1,
+                }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                <motion.button
+                  onClick={handleNoInteraction}
+                  animate={{ scale: noScale }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="px-8 py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xl rounded-2xl shadow-lg shadow-rose-200 transition-colors cursor-pointer select-none whitespace-nowrap"
+                >
+                  NO
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        {/* Playful hint text if tried NO */}
-        <AnimatePresence>
-          {noCount > 0 && (
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mt-6 text-sm font-medium text-pink-600 italic"
-            >
-              (Hint: The YES button is getting bigger for a reason! 😉)
-            </motion.p>
-          )}
-        </AnimatePresence>
       </motion.div>
     </div>
   );

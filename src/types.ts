@@ -9,6 +9,11 @@ export interface PhotoMemory {
   stripGroup?: 'strip1' | 'strip2';
 }
 
+export interface TimedLyricLine {
+  time: number; // seconds into the track when this line should show
+  text: string;
+}
+
 export interface SongDetails {
   title: string;
   artist: string;
@@ -16,6 +21,7 @@ export interface SongDetails {
   albumArt: string;
   youtubeId?: string; // e.g. "risk-it-all" or standard embed ID
   lyrics?: string;
+  timedLyrics?: TimedLyricLine[];
 }
 
 export interface LoveLetterDetails {

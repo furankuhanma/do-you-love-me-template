@@ -1,39 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
-import { ArrowLeft, Play, Pause, Disc, Music, Volume2, VolumeX, Heart, Sparkles, Youtube } from 'lucide-react';
-import { SongDetails } from '../types';
-import { toggleRomanticMelody, getMelodyStatus, playPopSound } from '../utils/audio';
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "motion/react";
+import {
+  ArrowLeft,
+  Play,
+  Pause,
+  Disc,
+  Music,
+  Sparkles,
+  Youtube,
+} from "lucide-react";
+import { SongDetails, TimedLyricLine } from "../types";
+import {
+  toggleRomanticMelody,
+  getMelodyStatus,
+  playPopSound,
+  getBgAudioTime,
+  seekBgAudio,
+  hasRealMusicTrack,
+} from "../utils/audio";
 
 interface GiftMusicProps {
   song: SongDetails;
   onBack: () => void;
 }
 
+const FALLBACK_LYRICS: TimedLyricLine[] = [
+  { time: 0, text: "♪ Add your timed lyrics in defaultData.ts ♪" },
+];
+
 export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(25);
-  const [volume, setVolume] = useState(80);
+  const [progress, setProgress] = useState(0); // 0-100 %
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [showLyrics, setShowLyrics] = useState(false);
   const [useYouTube, setUseYouTube] = useState(false);
+  const [activeLyricIndex, setActiveLyricIndex] = useState(-1);
+  const rafRef = useRef<number>();
+  const lyricsContainerRef = useRef<HTMLDivElement>(null);
+  const lyricRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+
+  const lyrics: TimedLyricLine[] = song.timedLyrics || FALLBACK_LYRICS;
+
+  const hasRealTrack = hasRealMusicTrack();
 
   useEffect(() => {
     setIsPlaying(getMelodyStatus());
   }, []);
 
+  // Real-time progress loop, synced to actual audio playback when available
   useEffect(() => {
-    let interval: number;
-    if (isPlaying && !useYouTube) {
-      interval = window.setInterval(() => {
-        setProgress((prev) => (prev >= 100 ? 0 : prev + 1));
-      }, 400);
+    const tick = () => {
+      if (isPlaying && !useYouTube) {
+        if (hasRealTrack) {
+          const { currentTime: t, duration: d } = getBgAudioTime();
+          setCurrentTime(t);
+          setDuration(d);
+          setProgress(d > 0 ? (t / d) * 100 : 0);
+
+          // Find the current lyric line for this timestamp.
+          // Starts at -1 so no line is "active" before the first timestamp.
+          let idx = -1;
+          for (let i = 0; i < lyrics.length; i++) {
+            if (lyrics[i].time <= t) idx = i;
+            else break;
+          }
+          setActiveLyricIndex(idx);
+        } else {
+          setProgress((prev) => (prev >= 100 ? 0 : prev + 0.4));
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isPlaying, useYouTube, hasRealTrack, lyrics]);
+
+  // Auto-scroll the lyrics panel to keep the active line in view
+  useEffect(() => {
+    if (activeLyricIndex < 0) return;
+    const activeEl = lyricRefs.current[activeLyricIndex];
+    if (activeEl) {
+      activeEl.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
-    return () => clearInterval(interval);
-  }, [isPlaying, useYouTube]);
+  }, [activeLyricIndex]);
 
   const handleTogglePlay = () => {
     playPopSound();
     const playing = toggleRomanticMelody((state) => setIsPlaying(state));
     setIsPlaying(playing);
+  };
+
+  const handleScrub = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!hasRealTrack || duration <= 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+    seekBgAudio(pct * duration);
+  };
+
+  const formatTime = (t: number) => {
+    if (!isFinite(t) || t < 0) return "0:00";
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -53,7 +128,7 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
           className="px-4 py-2 bg-white/90 hover:bg-white text-pink-600 font-semibold text-sm rounded-full shadow-md border border-pink-200 transition-all cursor-pointer flex items-center gap-2"
         >
           <Sparkles className="w-4 h-4" />
-          <span>{showLyrics ? 'Hide Lyrics' : 'View Lyrics'}</span>
+          <span>{showLyrics ? "Hide Lyrics" : "View Lyrics"}</span>
         </button>
       </div>
 
@@ -68,33 +143,29 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
         </h2>
       </motion.div>
 
-      {/* Main Music Player Box (matching Image 4 layout) */}
+      {/* Main Music Player Box */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-3xl bg-pink-100/70 border-4 border-white/80 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-pink-200/60 relative overflow-hidden flex flex-col md:flex-row items-center gap-8"
       >
-        {/* LEFT: Vinyl Record & Sleeve (matching Image 4) */}
+        {/* LEFT: Vinyl Record & Sleeve */}
         <div className="relative w-56 h-56 sm:w-64 sm:h-64 flex-shrink-0 flex items-center justify-center">
-          {/* Outer Pink Album Sleeve */}
           <div className="w-full h-full bg-pink-200/90 border-2 border-pink-300 rounded-2xl p-4 shadow-inner flex items-center justify-center relative overflow-hidden z-10">
-            {/* Spinning Vinyl Record Disc */}
             <div
               className={`w-48 h-48 sm:w-52 sm:h-52 bg-slate-900 rounded-full border-4 border-slate-800 shadow-2xl flex items-center justify-center relative transition-transform ${
-                isPlaying ? 'animate-spin-slow' : 'animate-spin-paused'
+                isPlaying ? "animate-spin-slow" : "animate-spin-paused"
               }`}
             >
-              {/* Grooves */}
               <div className="absolute inset-2 rounded-full border border-slate-700/50" />
               <div className="absolute inset-5 rounded-full border border-slate-700/50" />
               <div className="absolute inset-8 rounded-full border border-slate-700/50" />
               <div className="absolute inset-12 rounded-full border border-slate-700/50" />
 
-              {/* Center Pink Label */}
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-pink-300 border-2 border-pink-400 rounded-full flex flex-col items-center justify-center text-center p-1 shadow-md">
                 <span className="text-[10px] sm:text-xs font-dancing font-bold text-rose-900">
-                  {song.album || 'our story'}
+                  {song.album || "our story"}
                 </span>
                 <Disc className="w-3 h-3 text-rose-700" />
               </div>
@@ -104,9 +175,7 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
 
         {/* RIGHT: Player Controls & Video Card */}
         <div className="flex-1 w-full flex flex-col gap-4">
-          {/* Song Card Header */}
           <div className="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-md border border-pink-200/60 flex flex-col items-center text-center relative overflow-hidden">
-            {/* YouTube Embed Option or Thumbnail Banner */}
             {useYouTube && song.youtubeId ? (
               <div className="w-full aspect-video rounded-xl overflow-hidden mb-3 shadow-md">
                 <iframe
@@ -135,19 +204,27 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
               </div>
             )}
 
-            {/* Song Title & Controls Bar (matching Image 4 layout) */}
+            {/* Song Title & Controls Bar */}
             <div className="w-full bg-pink-200/70 rounded-xl p-3 flex flex-col gap-2">
-              {/* Scrub Bar */}
-              <div className="w-full bg-pink-300 h-1.5 rounded-full overflow-hidden cursor-pointer relative">
+              {/* Scrub Bar — real-time, seekable when a real track is loaded */}
+              <div
+                onClick={handleScrub}
+                className={`w-full bg-pink-300 h-1.5 rounded-full overflow-hidden relative ${
+                  hasRealTrack ? "cursor-pointer" : "cursor-default"
+                }`}
+              >
                 <div
-                  className="bg-rose-500 h-full rounded-full transition-all duration-300"
-                  style={{ width: `${progress}%` }}
+                  className="bg-rose-500 h-full rounded-full"
+                  style={{
+                    width: `${progress}%`,
+                    transition: "width 0.15s linear",
+                  }}
                 />
               </div>
 
               <div className="flex items-center justify-between text-[11px] text-rose-800 font-medium px-1">
-                <span>1:24</span>
-                <span>3:45</span>
+                <span>{hasRealTrack ? formatTime(currentTime) : "0:00"}</span>
+                <span>{hasRealTrack ? formatTime(duration) : "--:--"}</span>
               </div>
 
               {/* Central Play Button */}
@@ -166,33 +243,67 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
             </div>
           </div>
 
-          {/* YouTube Toggle Option */}
           {song.youtubeId && (
             <button
               onClick={() => setUseYouTube(!useYouTube)}
               className="text-xs text-rose-600 font-semibold flex items-center justify-center gap-1 hover:underline cursor-pointer"
             >
               <Youtube className="w-4 h-4 text-red-500" />
-              <span>{useYouTube ? 'Switch to Audio Synthesizer' : 'Watch YouTube Video'}</span>
+              <span>
+                {useYouTube
+                  ? "Switch to Audio Synthesizer"
+                  : "Watch YouTube Video"}
+              </span>
             </button>
           )}
         </div>
       </motion.div>
 
-      {/* Lyrics Card */}
+      {/* Karaoke Lyrics Card */}
       {showLyrics && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-6 max-w-xl w-full bg-white/90 p-6 rounded-2xl shadow-lg border border-pink-200 text-center"
         >
-          <h3 className="font-bold text-rose-800 text-base mb-3 flex items-center justify-center gap-2">
+          <h3 className="font-bold text-rose-800 text-base mb-4 flex items-center justify-center gap-2">
             <Music className="w-4 h-4 text-rose-500" />
             <span>Song Lyrics</span>
           </h3>
-          <p className="font-dancing text-lg text-slate-700 whitespace-pre-line leading-relaxed">
-            {song.lyrics || 'I would risk it all for you 💕'}
-          </p>
+
+          <div
+            ref={lyricsContainerRef}
+            className="flex flex-col gap-3 max-h-72 overflow-y-auto px-2 scroll-smooth"
+          >
+            {lyrics.map((line, idx) => {
+              const isActive =
+                idx === activeLyricIndex && isPlaying && hasRealTrack;
+              const isPast =
+                activeLyricIndex >= 0 && idx < activeLyricIndex && hasRealTrack;
+              return (
+                <motion.p
+                  key={idx}
+                  ref={(el) => (lyricRefs.current[idx] = el)}
+                  animate={{
+                    scale: isActive ? 1.08 : 1,
+                    opacity: isActive ? 1 : isPast ? 0.4 : 0.7,
+                  }}
+                  transition={{ duration: 0.25 }}
+                  className={`font-dancing text-lg sm:text-xl leading-relaxed ${
+                    isActive ? "text-rose-600 font-bold" : "text-slate-600"
+                  }`}
+                >
+                  {line.text}
+                </motion.p>
+              );
+            })}
+          </div>
+
+          {!hasRealTrack && (
+            <p className="text-[11px] text-slate-400 mt-4">
+              Karaoke sync will activate once your music1 track is added.
+            </p>
+          )}
         </motion.div>
       )}
     </div>

@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Settings, Heart, Sparkles, Home } from 'lucide-react';
-import { ScreenState, AppCustomization, PhotoMemory } from './types';
-import { defaultData } from './data/defaultData';
-import { QuestionScreen } from './components/QuestionScreen';
-import { GiftsScreen } from './components/GiftsScreen';
-import { GiftMemories } from './components/GiftMemories';
-import { GiftMusic } from './components/GiftMusic';
-import { GiftLetter } from './components/GiftLetter';
-import { CustomizerModal } from './components/CustomizerModal';
-import { playPopSound } from './utils/audio';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Settings, Heart, Sparkles, Home } from "lucide-react";
+import { ScreenState, AppCustomization, PhotoMemory } from "./types";
+import { defaultData } from "./data/defaultData";
+import { QuestionScreen } from "./components/QuestionScreen";
+import { GiftsScreen } from "./components/GiftsScreen";
+import { GiftMemories } from "./components/GiftMemories";
+import { GiftMusic } from "./components/GiftMusic";
+import { GiftLetter } from "./components/GiftLetter";
+import { CustomizerModal } from "./components/CustomizerModal";
+import { playPopSound } from "./utils/audio";
 
-const STORAGE_KEY = 'love_app_custom_data';
+const STORAGE_KEY = "love_app_custom_data";
 
 export default function App() {
-  const [screen, setScreen] = useState<ScreenState>('question');
+  const [screen, setScreen] = useState<ScreenState>("question");
   const [customData, setCustomData] = useState<AppCustomization>(defaultData);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
 
@@ -27,7 +27,7 @@ export default function App() {
         setCustomData((prev) => ({ ...prev, ...parsed }));
       }
     } catch (e) {
-      console.error('Failed to load storage:', e);
+      console.error("Failed to load storage:", e);
     }
   }, []);
 
@@ -36,7 +36,7 @@ export default function App() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
     } catch (e) {
-      console.error('Failed to save storage:', e);
+      console.error("Failed to save storage:", e);
     }
   };
 
@@ -45,7 +45,7 @@ export default function App() {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (e) {
-      console.error('Failed to reset storage:', e);
+      console.error("Failed to reset storage:", e);
     }
   };
 
@@ -66,41 +66,21 @@ export default function App() {
       <header className="w-full px-4 sm:px-6 py-3 flex items-center justify-between z-30 pointer-events-auto">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigateTo('question')}
+            onClick={() => navigateTo("question")}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white text-rose-700 text-xs font-bold rounded-full shadow-xs border border-pink-200 transition-all cursor-pointer"
           >
             <Home className="w-3.5 h-3.5" />
             <span>Start Over</span>
           </button>
-          
-          {screen !== 'question' && (
-            <button
-              onClick={() => navigateTo('gifts')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white text-rose-700 text-xs font-bold rounded-full shadow-xs border border-pink-200 transition-all cursor-pointer"
-            >
-              <Heart className="w-3.5 h-3.5 fill-rose-500" />
-              <span>Gifts Menu</span>
-            </button>
-          )}
         </div>
 
         {/* Customizer trigger */}
-        <button
-          onClick={() => {
-            playPopSound();
-            setIsCustomizerOpen(true);
-          }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-full shadow-md transition-all cursor-pointer"
-        >
-          <Settings className="w-3.5 h-3.5" />
-          <span>Edit Card 💕</span>
-        </button>
       </header>
 
       {/* Main Content View Switcher */}
       <main className="flex-1 flex flex-col items-center justify-center relative w-full">
         <AnimatePresence mode="wait">
-          {screen === 'question' && (
+          {screen === "question" && (
             <motion.div
               key="question"
               initial={{ opacity: 0, scale: 0.96 }}
@@ -112,12 +92,12 @@ export default function App() {
               <QuestionScreen
                 questionText={customData.questionText}
                 catImage={customData.catShyImage}
-                onYes={() => navigateTo('gifts')}
+                onYes={() => navigateTo("gifts")}
               />
             </motion.div>
           )}
 
-          {screen === 'gifts' && (
+          {screen === "gifts" && (
             <motion.div
               key="gifts"
               initial={{ opacity: 0, scale: 0.96 }}
@@ -134,7 +114,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {screen === 'gift1_memories' && (
+          {screen === "gift1_memories" && (
             <motion.div
               key="gift1"
               initial={{ opacity: 0, y: 15 }}
@@ -145,13 +125,13 @@ export default function App() {
             >
               <GiftMemories
                 memories={customData.memories}
-                onBack={() => navigateTo('gifts')}
+                onBack={() => navigateTo("gifts")}
                 onAddMemory={handleAddMemory}
               />
             </motion.div>
           )}
 
-          {screen === 'gift2_music' && (
+          {screen === "gift2_music" && (
             <motion.div
               key="gift2"
               initial={{ opacity: 0, y: 15 }}
@@ -162,12 +142,12 @@ export default function App() {
             >
               <GiftMusic
                 song={customData.song}
-                onBack={() => navigateTo('gifts')}
+                onBack={() => navigateTo("gifts")}
               />
             </motion.div>
           )}
 
-          {screen === 'gift3_letter' && (
+          {screen === "gift3_letter" && (
             <motion.div
               key="gift3"
               initial={{ opacity: 0, y: 15 }}
@@ -178,7 +158,7 @@ export default function App() {
             >
               <GiftLetter
                 letter={customData.letter}
-                onBack={() => navigateTo('gifts')}
+                onBack={() => navigateTo("gifts")}
               />
             </motion.div>
           )}

@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Sparkles, X, Heart, Plus, Camera, Download } from 'lucide-react';
-import { PhotoMemory } from '../types';
-import { playPopSound } from '../utils/audio';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  ArrowLeft,
+  Sparkles,
+  X,
+  Heart,
+  Plus,
+  Camera,
+  Download,
+} from "lucide-react";
+import { PhotoMemory } from "../types";
+import { playPopSound } from "../utils/audio";
 
 interface GiftMemoriesProps {
   memories: PhotoMemory[];
@@ -20,9 +28,13 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
   const [isUploading, setIsUploading] = useState(false);
 
   // Separate memories by type
-  const polaroids = memories.filter((m) => m.type === 'polaroid');
-  const strip1Photos = memories.filter((m) => m.type === 'photostrip' && m.stripGroup === 'strip1');
-  const strip2Photos = memories.filter((m) => m.type === 'photostrip' && m.stripGroup === 'strip2');
+  const polaroids = memories.filter((m) => m.type === "polaroid");
+  const strip1Photos = memories.filter(
+    (m) => m.type === "photostrip" && m.stripGroup === "strip1",
+  );
+  const strip2Photos = memories.filter(
+    (m) => m.type === "photostrip" && m.stripGroup === "strip2",
+  );
 
   const handleLike = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,9 +52,9 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
           const newMem: PhotoMemory = {
             id: `user-${Date.now()}`,
             url: result,
-            caption: 'Our Special Moment 💕',
-            date: 'Added by you',
-            type: 'polaroid',
+            caption: "Our Special Moment 💕",
+            date: "Added by you",
+            type: "polaroid",
           };
           onAddMemory(newMem);
           setIsUploading(false);
@@ -64,17 +76,6 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Gifts</span>
         </button>
-
-        <label className="flex items-center gap-2 px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm rounded-full shadow-md transition-all cursor-pointer">
-          <Camera className="w-4 h-4" />
-          <span>Add Photo</span>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </label>
       </div>
 
       {/* Title */}
@@ -130,7 +131,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
                 </button>
               </div>
               <span className="text-[11px] text-slate-400 px-1 font-sans block">
-                {photo.date || 'Memories'}
+                {photo.date || "Memories"}
               </span>
             </motion.div>
           ))}
@@ -229,7 +230,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
                 </button>
               </div>
               <span className="text-[11px] text-slate-400 px-1 font-sans block">
-                {photo.date || 'Memories'}
+                {photo.date || "Memories"}
               </span>
             </motion.div>
           ))}
@@ -277,7 +278,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
                 {selectedPhoto.caption}
               </h3>
               <p className="text-xs text-rose-500 font-medium mb-4">
-                {selectedPhoto.date || 'Captured moment'}
+                {selectedPhoto.date || "Captured moment"}
               </p>
 
               <div className="flex items-center gap-3">

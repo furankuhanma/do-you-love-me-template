@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Sparkles, Music, Volume2, VolumeX, Heart } from 'lucide-react';
-import { playChimeSound, toggleRomanticMelody } from '../utils/audio';
-import giftBoxImg from '../assets/images/cute_gift_box_1785993839357.jpg';
+import React, { useState, useEffect } from "react";
+import { motion } from "motion/react";
+import { Sparkles, Music, Volume2, VolumeX, Heart } from "lucide-react";
+import {
+  playChimeSound,
+  toggleRomanticMelody,
+  getMelodyStatus,
+} from "../utils/audio";
+import giftBoxImg from "../assets/images/cute_gift_box_1785993839357.jpg";
 
 interface GiftsScreenProps {
   yesResponseText: string;
   catImage: string;
-  onSelectGift: (giftId: 'gift1_memories' | 'gift2_music' | 'gift3_letter') => void;
+  onSelectGift: (
+    giftId: "gift1_memories" | "gift2_music" | "gift3_letter",
+  ) => void;
 }
 
 export const GiftsScreen: React.FC<GiftsScreenProps> = ({
@@ -17,12 +23,21 @@ export const GiftsScreen: React.FC<GiftsScreenProps> = ({
 }) => {
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
 
+  // Sync the toggle's visual state with the actual (global) playback state
+  // whenever this screen mounts — fixes the icon showing "muted" while
+  // music is actually still playing from another screen.
+  useEffect(() => {
+    setIsPlayingMusic(getMelodyStatus());
+  }, []);
+
   const handleToggleMusic = () => {
     const isPlaying = toggleRomanticMelody((state) => setIsPlayingMusic(state));
     setIsPlayingMusic(isPlaying);
   };
 
-  const handleGiftClick = (giftId: 'gift1_memories' | 'gift2_music' | 'gift3_letter') => {
+  const handleGiftClick = (
+    giftId: "gift1_memories" | "gift2_music" | "gift3_letter",
+  ) => {
     playChimeSound();
     onSelectGift(giftId);
   };
@@ -72,13 +87,15 @@ export const GiftsScreen: React.FC<GiftsScreenProps> = ({
 
         <p className="text-pink-600 font-medium text-sm sm:text-base mb-6 flex items-center gap-1">
           <Sparkles className="w-4 h-4" />
-          <span>I prepared three special gifts just for you! Pick one to unwrap 💕</span>
+          <span>
+            I prepared three special gifts just for you! Pick one to unwrap 💕
+          </span>
         </p>
 
         {/* Happy Cat Illustration */}
         <motion.div
           animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="mb-8 relative"
         >
           <img
@@ -95,7 +112,7 @@ export const GiftsScreen: React.FC<GiftsScreenProps> = ({
           <motion.div
             whileHover={{ y: -8, scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => handleGiftClick('gift1_memories')}
+            onClick={() => handleGiftClick("gift1_memories")}
             className="bg-pink-100/80 hover:bg-pink-100/90 border-2 border-pink-200/80 rounded-3xl p-6 flex flex-col items-center justify-center shadow-lg shadow-pink-100 cursor-pointer group transition-all relative overflow-hidden"
           >
             <div className="absolute top-2 right-2 text-pink-300 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -123,7 +140,7 @@ export const GiftsScreen: React.FC<GiftsScreenProps> = ({
           <motion.div
             whileHover={{ y: -8, scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => handleGiftClick('gift2_music')}
+            onClick={() => handleGiftClick("gift2_music")}
             className="bg-pink-100/80 hover:bg-pink-100/90 border-2 border-pink-200/80 rounded-3xl p-6 flex flex-col items-center justify-center shadow-lg shadow-pink-100 cursor-pointer group transition-all relative overflow-hidden"
           >
             <div className="absolute top-2 right-2 text-pink-300 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -151,7 +168,7 @@ export const GiftsScreen: React.FC<GiftsScreenProps> = ({
           <motion.div
             whileHover={{ y: -8, scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => handleGiftClick('gift3_letter')}
+            onClick={() => handleGiftClick("gift3_letter")}
             className="bg-pink-100/80 hover:bg-pink-100/90 border-2 border-pink-200/80 rounded-3xl p-6 flex flex-col items-center justify-center shadow-lg shadow-pink-100 cursor-pointer group transition-all relative overflow-hidden"
           >
             <div className="absolute top-2 right-2 text-pink-300 opacity-0 group-hover:opacity-100 transition-opacity">

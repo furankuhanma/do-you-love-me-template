@@ -89,7 +89,32 @@ export function playDodgeSound() {
   }
 }
 
-// Romantic Background Synth Loop
+// ---------------------------------------------------------------------------
+// Background music: "music1"
+// Looks for a real music1.(mp3|wav|ogg|m4a) file in src/assets/music/.
+// If it exists, plays it on loop. If it doesn't exist yet, falls back to the
+// synth chord-progression melody below so the toggle still works.
+// ---------------------------------------------------------------------------
+
+const musicModules = import.meta.glob('../assets/music/music1.{mp3,wav,ogg,m4a}', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+
+const music1Url = Object.values(musicModules)[0] || null;
+
+let bgAudioEl: HTMLAudioElement | null = null;
+
+function getBgAudioEl(): HTMLAudioElement {
+  if (!bgAudioEl && music1Url) {
+    bgAudioEl = new Audio(music1Url);
+    bgAudioEl.loop = true;
+    bgAudioEl.volume = 0.5;
+  }
+  return bgAudioEl as HTMLAudioElement;
+}
+
+// Romantic Background Synth Loop (fallback when music1 isn't available)
 let bgMelodyInterval: number | null = null;
 let isMelodyPlaying = false;
 
@@ -107,10 +132,24 @@ export function toggleRomanticMelody(onStateChange?: (playing: boolean) => void)
 
 export function startRomanticMelody() {
   if (isMelodyPlaying) return;
+  isMelodyPlaying = true;
+
+  // Prefer the real music1 file if it's been added
+  if (music1Url) {
+    try {
+      const el = getBgAudioEl();
+      el.currentTime = 0;
+      el.play().catch((e) => console.debug('music1 play failed:', e));
+    } catch (e) {
+      console.debug('music1 setup failed:', e);
+    }
+    return;
+  }
+
+  // Fallback: synth chord progression
   try {
     const ctx = getAudioContext();
-    isMelodyPlaying = true;
-    
+
     // Soothing warm chord progression (Fmaj7 - Cmaj7 - Am7 - G)
     const chords = [
       [349.23, 440.00, 523.25, 659.25], // Fmaj7
@@ -154,6 +193,11 @@ export function startRomanticMelody() {
 
 export function stopRomanticMelody() {
   isMelodyPlaying = false;
+
+  if (bgAudioEl) {
+    bgAudioEl.pause();
+  }
+
   if (bgMelodyInterval !== null) {
     clearInterval(bgMelodyInterval);
     bgMelodyInterval = null;
@@ -162,4 +206,26 @@ export function stopRomanticMelody() {
 
 export function getMelodyStatus() {
   return isMelodyPlaying;
+}
+
+// --- add these near the bg audio section ---
+
+export function getBgAudioTime(): { currentTime: number; duration: number } {
+  if (bgAudioEl && music1Url) {
+    return {
+      currentTime: bgAudioEl.currentTime || 0,
+      duration: bgAudioEl.duration || 0,
+    };
+  }
+  return { currentTime: 0, duration: 0 };
+}
+
+export function seekBgAudio(time: number) {
+  if (bgAudioEl && music1Url) {
+    bgAudioEl.currentTime = time;
+  }
+}
+
+export function hasRealMusicTrack(): boolean {
+  return !!music1Url;
 }
