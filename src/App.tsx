@@ -10,6 +10,7 @@ import { GiftMusic } from "./components/GiftMusic";
 import { GiftLetter } from "./components/GiftLetter";
 import { CustomizerModal } from "./components/CustomizerModal";
 import { playPopSound } from "./utils/audio";
+import { DateInviteScreen } from "./components/DateInviteScreen";
 
 const STORAGE_KEY = "love_app_custom_data";
 
@@ -80,6 +81,21 @@ export default function App() {
       {/* Main Content View Switcher */}
       <main className="flex-1 flex flex-col items-center justify-center relative w-full">
         <AnimatePresence mode="wait">
+          {screen === "date_invite" && (
+            <motion.div
+              key="date_invite"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="w-full"
+            >
+              <DateInviteScreen
+                invite={customData.dateInvite}
+                onBack={() => navigateTo("gifts")}
+              />
+            </motion.div>
+          )}
           {screen === "question" && (
             <motion.div
               key="question"
@@ -92,7 +108,8 @@ export default function App() {
               <QuestionScreen
                 questionText={customData.questionText}
                 catImage={customData.catShyImage}
-                onYes={() => navigateTo("gifts")}
+                noSequenceImages={customData.noSequenceImages}
+                onYes={() => navigateTo("date_invite")}
               />
             </motion.div>
           )}

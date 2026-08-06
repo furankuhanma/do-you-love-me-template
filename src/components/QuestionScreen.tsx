@@ -6,6 +6,7 @@ import { playChimeSound, playDodgeSound } from "../utils/audio";
 interface QuestionScreenProps {
   questionText: string;
   catImage: string;
+  noSequenceImages: string[];
   onYes: () => void;
 }
 
@@ -20,6 +21,7 @@ const OFFSETS = {
 export const QuestionScreen: React.FC<QuestionScreenProps> = ({
   questionText,
   catImage,
+  noSequenceImages,
   onYes,
 }) => {
   const [noCount, setNoCount] = useState(0);
@@ -58,6 +60,12 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
   const headline = yesClicked
     ? "I knew you'd say yes"
     : noPhrases[currentPhraseIndex];
+
+  // The cat art swaps in lockstep with the headline. Falls back to the
+  // base catImage if a sequence image is missing for that index.
+  const currentCatImage = yesClicked
+    ? catImage
+    : noSequenceImages[currentPhraseIndex] || catImage;
 
   // NO button disappears once we've reached the "last chance" phrase
   const showNoButton = !yesClicked && noCount < lastPhraseIndex;
@@ -167,16 +175,25 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         transition={{ duration: 0.6 }}
         className="max-w-md w-full bg-white/60 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl shadow-pink-100/50 border border-pink-100 flex flex-col items-center relative z-10"
       >
-        {/* Cat Illustration */}
+        {/* Cat Illustration — swaps with each NO click */}
         <div className="relative mb-5 sm:mb-6">
-          <motion.img
-            src={catImage}
-            alt="Cute shy cat"
-            referrerPolicy="no-referrer"
-            className="w-32 h-32 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          />
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentCatImage}
+              src={currentCatImage}
+              alt="Cute cat reacting to the question"
+              referrerPolicy="no-referrer"
+              className="w-32 h-32 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{
+                opacity: { duration: 0.25 },
+                scale: { duration: 0.25 },
+                y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+              }}
+            />
+          </AnimatePresence>
           <motion.span
             animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
