@@ -70,68 +70,68 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-pink-200 max-h-[90vh] flex flex-col relative"
+        className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-sm sm:max-w-xl p-4 sm:p-6 shadow-2xl border border-pink-200 max-h-[92vh] sm:max-h-[90vh] flex flex-col relative"
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-pink-100 mb-4">
-          <div className="flex items-center gap-2">
-            <Edit3 className="w-5 h-5 text-rose-500" />
-            <h3 className="text-xl font-bold font-sans text-rose-900">
+        <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-pink-100 mb-3 sm:mb-4 gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <Edit3 className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 shrink-0" />
+            <h3 className="text-base sm:text-xl font-bold font-sans text-rose-900 truncate">
               Customize Your Surprise Card 💕
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-2 bg-pink-50 p-1 rounded-xl mb-4 text-xs font-semibold">
+        <div className="flex items-center gap-1 sm:gap-2 bg-pink-50 p-1 rounded-xl mb-3 sm:mb-4 text-[11px] sm:text-xs font-semibold">
           <button
             onClick={() => setActiveTab("general")}
-            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1 ${
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${
               activeTab === "general"
                 ? "bg-white text-rose-600 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
             <Heart className="w-3.5 h-3.5" />
-            <span>Quiz & Name</span>
+            <span className="leading-tight">Quiz & Name</span>
           </button>
           <button
             onClick={() => setActiveTab("music")}
-            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1 ${
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${
               activeTab === "music"
                 ? "bg-white text-rose-600 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
             <Music className="w-3.5 h-3.5" />
-            <span>Our Song</span>
+            <span className="leading-tight">Our Song</span>
           </button>
           <button
             onClick={() => setActiveTab("letter")}
-            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1 ${
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${
               activeTab === "letter"
                 ? "bg-white text-rose-600 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
             <Mail className="w-3.5 h-3.5" />
-            <span>Love Letter</span>
+            <span className="leading-tight">Love Letter</span>
           </button>
         </div>
 
         {/* Form Body */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1 text-sm">
+        <div className="flex-1 overflow-y-auto space-y-3 sm:space-y-4 pr-1 text-sm">
           {activeTab === "general" && (
             <>
               <div>
@@ -142,7 +142,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={partnerName}
                   onChange={(e) => setPartnerName(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                   placeholder="e.g. Honey, Alex, My Love"
                 />
               </div>
@@ -155,7 +155,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                   placeholder="e.g. Do you love me?"
                 />
               </div>
@@ -168,7 +168,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={yesResponseText}
                   onChange={(e) => setYesResponseText(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                   placeholder="e.g. I knew you'd say yes 💕"
                 />
               </div>
@@ -185,7 +185,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={songTitle}
                   onChange={(e) => setSongTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                 />
               </div>
 
@@ -197,7 +197,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={songArtist}
                   onChange={(e) => setSongArtist(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                 />
               </div>
 
@@ -209,7 +209,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={youtubeId}
                   onChange={(e) => setYoutubeId(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                   placeholder="e.g. dqb0Nip2_Gg"
                 />
               </div>
@@ -226,7 +226,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={letterSalutation}
                   onChange={(e) => setLetterSalutation(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                 />
               </div>
 
@@ -238,7 +238,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   rows={5}
                   value={letterBody}
                   onChange={(e) => setLetterBody(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 resize-none font-sans"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 resize-none font-sans text-sm sm:text-base"
                 />
               </div>
 
@@ -250,7 +250,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
                   type="text"
                   value={letterSender}
                   onChange={(e) => setLetterSender(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm sm:text-base"
                 />
               </div>
             </>
@@ -258,14 +258,14 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-pink-100 mt-4">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-3 sm:pt-4 border-t border-pink-100 mt-3 sm:mt-4">
           <button
             onClick={() => {
               playPopSound();
               onReset();
               onClose();
             }}
-            className="flex items-center gap-1.5 px-3 py-2 text-slate-500 hover:text-slate-800 text-xs font-semibold cursor-pointer"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 text-slate-500 hover:text-slate-800 text-xs font-semibold cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Defaults</span>
@@ -273,7 +273,7 @@ export const CustomizerModal: React.FC<CustomizerModalProps> = ({
 
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm rounded-xl shadow-md transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm rounded-xl shadow-md transition-all cursor-pointer w-full sm:w-auto"
           >
             <Save className="w-4 h-4" />
             <span>Save Customization</span>

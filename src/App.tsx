@@ -63,11 +63,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100/70 via-pink-50/50 to-rose-100/50 text-slate-800 font-sans relative overflow-x-hidden flex flex-col">
       {/* Floating Top Nav / Customizer Button */}
-      <header className="w-full px-4 sm:px-6 py-3 flex items-center justify-between z-30 pointer-events-auto">
+      <header className="w-full px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between z-30 pointer-events-auto">
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigateTo("question")}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white text-rose-700 text-xs font-bold rounded-full shadow-xs border border-pink-200 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-white/80 hover:bg-white text-rose-700 text-xs font-bold rounded-full shadow-xs border border-pink-200 transition-all cursor-pointer"
           >
             <Home className="w-3.5 h-3.5" />
             <span>Start Over</span>
@@ -166,7 +166,7 @@ export default function App() {
       </main>
 
       {/* Footer watermark */}
-      <footer className="py-3 text-center text-xs font-medium text-rose-400/80 select-none">
+      <footer className="py-2.5 sm:py-3 px-4 text-center text-[11px] sm:text-xs font-medium text-rose-400/80 select-none">
         Crafted with 💕 for someone special
       </footer>
 

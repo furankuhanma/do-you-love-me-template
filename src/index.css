@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Custom breakpoint used throughout the components for fine-grained
+   scaling between mobile and the default sm: (640px) breakpoint.
+   Tailwind v4 reads breakpoints from this @theme block instead of
+   tailwind.config.js. */
+@theme {
+  --breakpoint-xs: 30rem; /* 480px */
+}
+
 @layer utilities {
   .font-dancing {
     font-family: 'Dancing Script', cursive;
@@ -38,4 +46,33 @@
   background-image: radial-gradient(#f472b6 0.75px, transparent 0.75px), radial-gradient(#f472b6 0.75px, #fff0f5 0.75px);
   background-size: 30px 30px;
   background-position: 0 0, 15px 15px;
+}
+
+/* Mobile-first safety defaults */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Respect device safe areas (notches, home indicators) on mobile */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Prevent iOS Safari from auto-zooming on input focus while keeping
+   inputs visually consistent with the rest of the design system */
+@media (max-width: 639px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
