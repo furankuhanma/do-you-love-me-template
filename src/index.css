@@ -10,10 +10,10 @@
 
 @layer utilities {
   .font-dancing {
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
   }
   .font-caveat {
-    font-family: 'Caveat', cursive;
+    font-family: 'Playfair Display', serif;
   }
   .font-outfit {
     font-family: 'Outfit', sans-serif;
@@ -75,4 +75,17 @@ body {
   select {
     font-size: 16px;
   }
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('./assets/fonts/CormorantGaramond-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('./assets/fonts/PlayfairDisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
 }
