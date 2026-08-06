@@ -287,7 +287,7 @@ export const defaultData: AppCustomization = {
   },
   letter: {
     title: 'Dear Babii',
-    salutation: 'Dear Love,',
+    salutation: 'Dear Babi,',
     body: `Happy Birthday to my most special and favorite person, Happy Birthday Babii🩷
 
 Today is also exactly 1 month since our friendship began, some people take years to leave a mark on our hearts, yet somehow, you did it in just a few weeks.
