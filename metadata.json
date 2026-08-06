@@ -1,0 +1,6 @@
+{
+  "name": "Do You Love Me",
+  "description": "An interactive romantic gift experience with playful quiz, cute memory polaroids, vinyl song player, and love letter.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

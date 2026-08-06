@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-dancing {
+    font-family: 'Dancing Script', cursive;
+  }
+  .font-caveat {
+    font-family: 'Caveat', cursive;
+  }
+  .font-outfit {
+    font-family: 'Outfit', sans-serif;
+  }
+  .font-sans {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}
+
+.animate-spin-paused {
+  animation-play-state: paused;
+}
+
+/* Custom romantic lipstick kiss pattern overlay */
+.bg-kiss-pattern {
+  background-color: #fff0f5;
+  background-image: radial-gradient(#f472b6 0.75px, transparent 0.75px), radial-gradient(#f472b6 0.75px, #fff0f5 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
