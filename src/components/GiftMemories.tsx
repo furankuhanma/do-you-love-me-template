@@ -130,13 +130,13 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
           className="text-center"
         >
           <h1 className="font-dancing font-bold text-rose-900 text-[40px] sm:text-[48px] md:text-[56px] leading-tight tracking-wide">
-            All About Him
+            Our Story in Pictures
           </h1>
           <p className="mt-4 text-rose-600/90 text-base sm:text-lg font-sans">
-            A little collection of my favorite versions of you. 🤍
+            A little collection of our favorite moments together. 🤍
           </p>
           <p className="mt-3 text-rose-400 text-sm font-sans">
-            ♡ Every photo holds a little memory ♡
+            ♡ Every photo holds a little memory of us ♡
           </p>
         </motion.div>
 

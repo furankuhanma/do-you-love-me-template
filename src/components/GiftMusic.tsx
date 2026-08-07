@@ -122,7 +122,7 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Gifts</span>
         </button>
-
+        {/*
         <button
           onClick={() => setShowLyrics(!showLyrics)}
           className="px-3 sm:px-4 py-2 bg-white/90 hover:bg-white text-pink-600 font-semibold text-xs sm:text-sm rounded-full shadow-md border border-pink-200 transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 shrink-0"
@@ -130,6 +130,7 @@ export const GiftMusic: React.FC<GiftMusicProps> = ({ song, onBack }) => {
           <Sparkles className="w-4 h-4" />
           <span>{showLyrics ? "Hide Lyrics" : "View Lyrics"}</span>
         </button>
+        */}
       </div>
 
       {/* Title */}
