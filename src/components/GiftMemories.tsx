@@ -68,7 +68,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
   const handleLike = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     playPopSound();
-    setLikes((prev) => ({ ...prev, [id]: (prev[id] || 12) + 1 }));
+    setLikes((prev) => ({ ...prev, [id]: (prev[id] || 4) + 1 }));
   };
 
   return (
@@ -222,7 +222,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
                             className="mt-2 inline-flex items-center gap-1.5 text-rose-500 hover:text-rose-600 transition-colors text-sm font-medium"
                           >
                             <Heart className="w-4 h-4 fill-rose-400" />
-                            <span>{likes[photo.id] || 12}</span>
+                            <span>{likes[photo.id] || 4}</span>
                           </button>
                         </motion.div>
                       )}
@@ -317,7 +317,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
                         className="text-rose-400 hover:text-rose-600 transition-colors flex items-center gap-1 text-xs shrink-0"
                       >
                         <Heart className="w-4 h-4 fill-rose-400" />
-                        <span>{likes[photo.id] || 12}</span>
+                        <span>{likes[photo.id] || 4}</span>
                       </button>
                     </div>
                     <span className="text-[11px] text-slate-400 px-1 font-sans block">
@@ -380,7 +380,7 @@ export const GiftMemories: React.FC<GiftMemoriesProps> = ({
                   className="flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm rounded-full shadow-md transition-all cursor-pointer"
                 >
                   <Heart className="w-4 h-4 fill-white" />
-                  <span>Send Heart ({likes[selectedPhoto.id] || 12})</span>
+                  <span>Send Heart ({likes[selectedPhoto.id] || 4})</span>
                 </button>
               </div>
             </motion.div>
